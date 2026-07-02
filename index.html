@@ -249,12 +249,12 @@ async function loadPageMarkdown(page){
 function buildSidebar(){
   const nav = document.getElementById("navTree");
   nav.innerHTML = "";
-  let currentSection = "__none__";
+  let currentSection = undefined; // nunca é igual a page.section na 1ª volta
   let ul = null;
 
   PAGES.forEach(page => {
     const sec = page.section || "__none__";
-    if(sec !== currentSection){
+    if(sec !== currentSection || !ul){
       currentSection = sec;
       if(page.section){
         const cap = document.createElement("p");
@@ -342,11 +342,12 @@ document.getElementById("menuToggle").addEventListener("click", ()=>{
     window.addEventListener("hashchange", route);
     route();
   }catch(err){
-    document.getElementById("navTree").innerHTML = '<p class="state-msg error">' + err.message + '</p>';
+    document.getElementById("navTree").innerHTML = '<p class="state-msg error">Erro: ' + err.message + '</p>';
     document.getElementById("content").innerHTML =
-      '<p class="state-msg error">Falha ao carregar content/index.json. Este site precisa ser servido via HTTP ' +
-      '(GitHub Pages, ou localmente com algo como <code>python -m http.server</code>) — abrir o arquivo direto ' +
-      '(file://) bloqueia o carregamento por CORS.</p>';
+      '<p class="state-msg error">Erro ao carregar a página: ' + err.message + '</p>' +
+      '<p class="state-msg">Se estiver testando localmente pelo <code>file://</code> (abrindo o HTML direto no navegador), ' +
+      'use um servidor HTTP (ex: <code>python -m http.server</code>) ou publique via GitHub Pages — ' +
+      '<code>fetch()</code> não funciona em arquivos abertos direto do disco.</p>';
   }
 })();
 </script>
