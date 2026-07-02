@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kite Docs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,400&family=Roboto+Slab:wght@400;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+<style>
+/* ============================================================
+   TEMA: réplica do Read the Docs / Sphinx (sphinx_rtd_theme)
+   CONTEÚDO real fica em content/*.md, listado em content/index.json.
+   Este HTML não precisa ser editado para trocar textos.
+   ============================================================ */
+:root{
+  --sidebar-bg:#343131;
+  --sidebar-bg-alt:#2c2c2c;
+  --sidebar-hover:#4e4a4a;
+  --sidebar-text:#c9c9c9;
+  --sidebar-text-dim:#8fa3b3;
+  --accent-blue:#2980B9;
+  --text:#404040;
+  --text-light:#767676;
+  --border:#e1e4e5;
+  --code-bg:#f8f8f8;
+  --note-bg:#e7f2fa;
+  --note-border:#6ab0de;
+  --warn-bg:#ffedcc;
+  --warn-border:#f0b37e;
+  --tip-bg:#e6f9e6;
+  --tip-border:#3aa53a;
+  --sidebar-w:300px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:"Lato",-apple-system,"Helvetica Neue",Arial,sans-serif;
+  color:var(--text);
+  font-size:16px;
+  line-height:1.6;
+  background:#fff;
+}
+
+/* ---------- Sidebar ---------- */
+.sidebar{
+  position:fixed; top:0; left:0; bottom:0; width:var(--sidebar-w);
+  background:var(--sidebar-bg);
+  overflow-y:auto;
+  z-index:20;
+  display:flex; flex-direction:column;
+}
+.sidebar-header{
+  padding:1.2rem 1.4rem 1rem;
+  background:var(--sidebar-bg-alt);
+  border-bottom:1px solid #1c1c1c;
+}
+.sidebar-header a{
+  color:#fff; text-decoration:none; font-weight:700; font-size:1.35rem;
+  font-family:"Roboto Slab",serif;
+  display:flex; align-items:center; gap:.5rem;
+}
+.sidebar-header .version{
+  display:block; margin-top:.3rem; color:var(--sidebar-text-dim); font-size:.8rem;
+}
+.search-box{ padding:.9rem 1.2rem; }
+.search-box input{
+  width:100%; padding:.5rem .7rem; border:none; border-radius:2px;
+  background:#fff; color:#333; font-size:.85rem; font-family:inherit;
+}
+.search-box input:focus{ outline:2px solid var(--accent-blue); }
+
+.nav-tree{ flex:1; padding-bottom:2rem; }
+.nav-caption{
+  color:#55a5d9; text-transform:uppercase; font-size:.75rem; font-weight:700;
+  letter-spacing:.04em; padding:1rem 1.4rem .4rem; margin:0;
+}
+.nav-tree ul{ list-style:none; margin:0; padding:0; }
+.nav-tree a{
+  display:block; color:var(--sidebar-text); text-decoration:none;
+  padding:.45rem 1.4rem; font-size:.92rem; border-bottom:1px solid rgba(255,255,255,.03);
+}
+.nav-tree .nav-l2 a{ padding-left:2.2rem; font-size:.87rem; }
+.nav-tree a:hover{ background:var(--sidebar-hover); color:#fff; }
+.nav-tree a.current{
+  background:#fcfcfc; color:#404040; font-weight:700;
+  border-left:3px solid var(--accent-blue);
+}
+.nav-tree a.hidden{ display:none; }
+
+/* ---------- Layout / Content ---------- */
+.content-wrap{ margin-left:var(--sidebar-w); min-height:100vh; }
+.breadcrumbs{
+  background:#fcfcfc; border-bottom:1px solid var(--border);
+  padding:.7rem 3rem; font-size:.85rem; color:var(--text-light);
+}
+.breadcrumbs a{ color:var(--accent-blue); text-decoration:none; }
+.breadcrumbs a:hover{ text-decoration:underline; }
+
+.document{ max-width:800px; padding:2.2rem 3rem 4rem; }
+.document h1{
+  font-family:"Roboto Slab",serif; font-size:2rem; font-weight:700;
+  border-bottom:1px solid var(--border); padding-bottom:.5rem; margin-top:0;
+}
+.document h2{
+  font-family:"Roboto Slab",serif; font-size:1.5rem; font-weight:700;
+  margin-top:2.2rem; border-bottom:1px solid var(--border); padding-bottom:.3rem;
+}
+.document h3{ font-size:1.2rem; font-weight:700; margin-top:1.6rem; }
+.document p{ margin:0 0 1rem; }
+.document a{ color:var(--accent-blue); text-decoration:none; }
+.document a:hover{ text-decoration:underline; }
+
+.document code{
+  background:var(--code-bg); border:1px solid var(--border); border-radius:2px;
+  padding:.1rem .35rem; font-family:"Roboto Mono",monospace; font-size:.85em; color:#e74c3c;
+}
+.document pre{
+  background:var(--code-bg); border:1px solid var(--border); border-left:3px solid var(--accent-blue);
+  border-radius:2px; padding:1rem 1.2rem; overflow-x:auto; margin:0 0 1.2rem;
+}
+.document pre code{ background:none; border:none; padding:0; color:#404040; }
+
+.document blockquote{
+  margin:0 0 1.2rem; padding:.1rem 1.2rem; border-left:4px solid var(--border); color:var(--text-light);
+}
+.document table{ border-collapse:collapse; width:100%; margin:0 0 1.4rem; font-size:.92rem; }
+.document th, .document td{ border:1px solid var(--border); padding:.5rem .8rem; text-align:left; }
+.document th{ background:#f3f6f6; font-weight:700; }
+.document ul, .document ol{ margin:0 0 1.1rem; padding-left:1.6rem; }
+.document li{ margin-bottom:.3rem; }
+.document hr{ border:none; border-top:1px solid var(--border); margin:2rem 0; }
+.document img{ max-width:100%; }
+
+.admonition{
+  margin:0 0 1.3rem; border-radius:2px; overflow:hidden; border:1px solid var(--note-border);
+}
+.admonition-title{
+  font-weight:700; padding:.5rem 1rem; color:#fff; font-size:.92rem;
+}
+.admonition p{ padding:0 1rem; margin:.8rem 0; }
+.admonition.note{ border-color:var(--note-border); background:var(--note-bg); }
+.admonition.note .admonition-title{ background:var(--note-border); }
+.admonition.warning{ border-color:var(--warn-border); background:var(--warn-bg); }
+.admonition.warning .admonition-title{ background:var(--warn-border); }
+.admonition.tip{ border-color:var(--tip-border); background:var(--tip-bg); }
+.admonition.tip .admonition-title{ background:var(--tip-border); }
+
+.doc-footer{
+  border-top:1px solid var(--border); margin-top:2.5rem; padding-top:1.2rem;
+  display:flex; justify-content:space-between; font-size:.88rem;
+}
+.doc-footer a{ color:var(--accent-blue); text-decoration:none; }
+.doc-footer a:hover{ text-decoration:underline; }
+.doc-footer .prev::before{ content:"« "; }
+.doc-footer .next::after{ content:" »"; }
+.rtd-footer{
+  text-align:center; color:var(--text-light); font-size:.8rem; padding:1.5rem 3rem 2.5rem;
+}
+
+.state-msg{ padding:2rem 3rem; color:var(--text-light); }
+.state-msg.error{ color:#c0392b; }
+
+/* Mobile toggle */
+.mobile-bar{ display:none; }
+@media (max-width: 860px){
+  .sidebar{ transform:translateX(-100%); transition:transform .2s ease; }
+  .sidebar.open{ transform:translateX(0); }
+  .content-wrap{ margin-left:0; }
+  .document{ padding:1.5rem 1.2rem 3rem; }
+  .breadcrumbs{ padding:.7rem 1.2rem; }
+  .mobile-bar{
+    display:flex; align-items:center; gap:.8rem; background:var(--sidebar-bg); color:#fff;
+    padding:.8rem 1.2rem; position:sticky; top:0; z-index:10;
+  }
+  .mobile-bar button{
+    background:none; border:1px solid #666; color:#fff; border-radius:3px; padding:.3rem .6rem; font-size:1rem;
+  }
+}
+</style>
+</head>
+<body>
+
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <a href="#inicio">🪁 Kite Docs</a>
+    <span class="version">v1.0.0</span>
+  </div>
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="Buscar docs...">
+  </div>
+  <div class="nav-tree" id="navTree">
+    <p class="state-msg">Carregando índice…</p>
+  </div>
+</nav>
+
+<div class="content-wrap">
+  <div class="mobile-bar">
+    <button id="menuToggle">☰</button>
+    <strong>Kite Docs</strong>
+  </div>
+  <div class="breadcrumbs" id="breadcrumbs"></div>
+  <article class="document" id="content">
+    <p class="state-msg">Carregando…</p>
+  </article>
+  <div class="rtd-footer">Gerado com um tema estilo Sphinx / Read the Docs — conteúdo real em <code>content/*.md</code>.</div>
+</div>
+
+<script>
+/* ============================================================
+   Motor da wiki.
+   Estrutura de conteúdo esperada:
+     content/index.json   -> [{ id, title, section, file }, ...]
+     content/<file>.md    -> corpo em Markdown de cada página
+
+   Para adicionar/editar páginas:
+     1. Crie ou edite o .md dentro de content/
+     2. Registre (ou ajuste) a entrada correspondente em content/index.json
+   Nada neste HTML precisa ser tocado para isso.
+   ============================================================ */
+marked.setOptions({ breaks:false, gfm:true });
+
+let PAGES = [];
+const mdCache = new Map(); // id -> markdown já buscado
+
+// admonitions :::note ... ::: -> divs
+function renderAdmonitions(md){
+  return md.replace(/:::(note|warning|tip)\n([\s\S]*?):::/g, (_, kind, body) => {
+    const labels = { note:"Nota", warning:"Atenção", tip:"Dica" };
+    return `<div class="admonition ${kind}"><p class="admonition-title">${labels[kind]}</p>${marked.parse(body.trim())}</div>`;
+  });
+}
+
+async function loadIndex(){
+  const res = await fetch("content/index.json");
+  if(!res.ok) throw new Error("Não foi possível carregar content/index.json (HTTP " + res.status + ")");
+  PAGES = await res.json();
+}
+
+async function loadPageMarkdown(page){
+  if(mdCache.has(page.id)) return mdCache.get(page.id);
+  const res = await fetch("content/" + page.file);
+  if(!res.ok) throw new Error("Não foi possível carregar content/" + page.file + " (HTTP " + res.status + ")");
+  const md = await res.text();
+  mdCache.set(page.id, md);
+  return md;
+}
+
+function buildSidebar(){
+  const nav = document.getElementById("navTree");
+  nav.innerHTML = "";
+  let currentSection = "__none__";
+  let ul = null;
+
+  PAGES.forEach(page => {
+    const sec = page.section || "__none__";
+    if(sec !== currentSection){
+      currentSection = sec;
+      if(page.section){
+        const cap = document.createElement("p");
+        cap.className = "nav-caption";
+        cap.textContent = page.section;
+        nav.appendChild(cap);
+      }
+      ul = document.createElement("ul");
+      nav.appendChild(ul);
+    }
+    const li = document.createElement("li");
+    if(page.section) li.className = "nav-l2";
+    const a = document.createElement("a");
+    a.href = "#" + page.id;
+    a.textContent = page.title;
+    a.dataset.id = page.id;
+    a.dataset.title = page.title.toLowerCase();
+    li.appendChild(a);
+    ul.appendChild(li);
+  });
+}
+
+async function renderPage(id){
+  const idx = PAGES.findIndex(p => p.id === id);
+  const page = idx >= 0 ? PAGES[idx] : PAGES[0];
+  if(!page) return;
+
+  document.querySelectorAll(".nav-tree a").forEach(a=>{
+    a.classList.toggle("current", a.dataset.id === page.id);
+  });
+
+  const crumbParts = ['<a href="#' + PAGES[0].id + '">Docs</a>'];
+  if(page.section) crumbParts.push(page.section);
+  crumbParts.push(page.title);
+  document.getElementById("breadcrumbs").innerHTML = crumbParts.join(" &raquo; ");
+
+  const content = document.getElementById("content");
+  content.innerHTML = '<p class="state-msg">Carregando…</p>';
+
+  let md;
+  try{
+    md = await loadPageMarkdown(page);
+  }catch(err){
+    content.innerHTML = '<p class="state-msg error">Erro ao carregar esta página: ' + err.message + '</p>';
+    return;
+  }
+
+  const html = marked.parse(renderAdmonitions(md));
+  content.innerHTML = html;
+
+  const prev = PAGES[idx-1];
+  const next = PAGES[idx+1];
+  const footer = document.createElement("div");
+  footer.className = "doc-footer";
+  footer.innerHTML =
+    (prev ? `<a class="prev" href="#${prev.id}">${prev.title}</a>` : "<span></span>") +
+    (next ? `<a class="next" href="#${next.id}">${next.title}</a>` : "<span></span>");
+  content.appendChild(footer);
+
+  document.title = page.title + " — Kite Docs";
+  window.scrollTo(0,0);
+  document.getElementById("sidebar").classList.remove("open");
+}
+
+function route(){
+  const id = location.hash.replace("#","") || (PAGES[0] && PAGES[0].id);
+  if(id) renderPage(id);
+}
+
+document.getElementById("searchInput").addEventListener("input", (e)=>{
+  const q = e.target.value.trim().toLowerCase();
+  document.querySelectorAll(".nav-tree a").forEach(a=>{
+    a.classList.toggle("hidden", q.length>0 && !a.dataset.title.includes(q));
+  });
+});
+
+document.getElementById("menuToggle").addEventListener("click", ()=>{
+  document.getElementById("sidebar").classList.toggle("open");
+});
+
+(async function init(){
+  try{
+    await loadIndex();
+    buildSidebar();
+    window.addEventListener("hashchange", route);
+    route();
+  }catch(err){
+    document.getElementById("navTree").innerHTML = '<p class="state-msg error">' + err.message + '</p>';
+    document.getElementById("content").innerHTML =
+      '<p class="state-msg error">Falha ao carregar content/index.json. Este site precisa ser servido via HTTP ' +
+      '(GitHub Pages, ou localmente com algo como <code>python -m http.server</code>) — abrir o arquivo direto ' +
+      '(file://) bloqueia o carregamento por CORS.</p>';
+  }
+})();
+</script>
+</body>
+</html>
