@@ -1,0 +1,8 @@
+[
+  { "id": "inicio",          "title": "Início",            "section": null,   "file": "inicio.md" },
+  { "id": "primeiros-passos","title": "Primeiros Passos",  "section": null,   "file": "primeiros-passos.md" },
+  { "id": "instalacao",      "title": "Instalação",        "section": "Guia", "file": "instalacao.md" },
+  { "id": "configuracao",    "title": "Configuração",      "section": "Guia", "file": "configuracao.md" },
+  { "id": "api-referencia",  "title": "Referência",        "section": "API",  "file": "api-referencia.md" },
+  { "id": "faq",             "title": "FAQ",                "section": "API",  "file": "faq.md" }
+]
