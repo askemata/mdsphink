@@ -1,6 +1,8 @@
-# Kite Docs
+# Askemata
 
-Bem-vindo à documentação do **Kite**, uma ferramenta de linha de comando de exemplo. Este conteúdo é um placeholder — substitua pelo texto real neste arquivo `.md`.
+Bem-vindo à documentação do **Askemata**. Reúno aqui diversos de meus projetos, como o blog [Askesis](askesis.hypotheses.org), o editor [Askesis-Zettel](askemata.github.io/az2) (Markdown com Zettelkasten), o organizador de tempo Tempus Fugit e outros implementos. 
+
+Nesta página, listo diversas implementações. Tudo é abastecido com arquivos `.md`. *Work in Progress*
 
 > Esta wiki lê arquivos Markdown reais da pasta `content/`, listados em `content/index.json`, dentro de um layout que imita o tema Read the Docs do Sphinx.
 
