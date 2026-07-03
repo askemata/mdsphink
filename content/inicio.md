@@ -1,6 +1,14 @@
+---
+autor: Askemata
+instituicao: Nome da Instituição
+email: alguem@exemplo.com
+resumo: Página inicial do arquivo Askemata.
+palavras-chave: [termo1, termo2, termo3]
+---
+
 # Askemata
 
-Bem-vindo à documentação do **Askemata**. Reúno aqui diversos de meus projetos, como o blog [Askesis](askesis.hypotheses.org), o editor [Askesis-Zettel](askemata.github.io/az2) (Markdown com Zettelkasten), o organizador de tempo Tempus Fugit e outros implementos. 
+Bem-vindo à documentação do **Askemata**. Reúno aqui diversos "exercícios" em torno dos assuntos: Filosofia, Ciência, Ciências Humanas, Psicologia e Tecnologia. Dentre eles, o "*carnet de recherche*" [Askesis](https://askesis.hypotheses.org), o editor [Askesis-Zettel](http://askemata.github.io/az2) (Markdown com Zettelkasten), o organizador de tempo Tempus Fugit e outros implementos. 
 
 Nesta página, listo diversas implementações. Tudo é abastecido com arquivos `.md`. *Work in Progress*
 
