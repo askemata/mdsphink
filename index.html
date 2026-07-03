@@ -86,7 +86,7 @@ body{
   background:#fcfcfc; color:#404040; font-weight:700;
   border-left:3px solid var(--accent-blue);
 }
-.nav-tree a.hidden{ display:none; }
+.nav-tree li.hidden, .nav-group.hidden{ display:none; }
 
 /* ---------- Layout / Content ---------- */
 .content-wrap{ margin-left:var(--sidebar-w); min-height:100vh; }
@@ -382,7 +382,7 @@ body{
 <div class="content-wrap">
   <div class="mobile-bar">
     <button id="menuToggle">☰</button>
-    <strong>Kite Docs</strong>
+    <strong>Askemata</strong>
   </div>
   <div class="breadcrumbs-row no-print">
     <div class="breadcrumbs" id="breadcrumbs"></div>
@@ -437,20 +437,23 @@ function buildSidebar(){
   const nav = document.getElementById("navTree");
   nav.innerHTML = "";
   let currentSection = undefined; // nunca é igual a page.section na 1ª volta
-  let ul = null;
+  let group = null, ul = null;
 
   PAGES.forEach(page => {
     const sec = page.section || "__none__";
-    if(sec !== currentSection || !ul){
+    if(sec !== currentSection || !group){
       currentSection = sec;
+      group = document.createElement("div");
+      group.className = "nav-group";
       if(page.section){
         const cap = document.createElement("p");
         cap.className = "nav-caption";
         cap.textContent = page.section;
-        nav.appendChild(cap);
+        group.appendChild(cap);
       }
       ul = document.createElement("ul");
-      nav.appendChild(ul);
+      group.appendChild(ul);
+      nav.appendChild(group);
     }
     const li = document.createElement("li");
     if(page.section) li.className = "nav-l2";
@@ -458,7 +461,6 @@ function buildSidebar(){
     a.href = "#" + page.id;
     a.textContent = page.title;
     a.dataset.id = page.id;
-    a.dataset.title = page.title.toLowerCase();
     li.appendChild(a);
     ul.appendChild(li);
   });
@@ -494,7 +496,7 @@ async function renderPage(id){
 
   const meta = document.createElement("div");
   meta.className = "print-meta";
-  const kicker = page.section ? (page.section + " · Kite Docs") : "Kite Docs";
+  const kicker = page.section ? (page.section + " · Askemata") : "Askemata";
   const today = new Date().toLocaleDateString("pt-BR", { day:"2-digit", month:"long", year:"numeric" });
   meta.innerHTML = "<span>" + kicker + "</span><span>" + today + "</span>";
   content.prepend(meta);
@@ -513,7 +515,7 @@ async function renderPage(id){
   printRow.innerHTML = '<button class="print-btn" title="Abre o diálogo de impressão do navegador — escolha \'Salvar como PDF\' para gerar um PDF">🖨️ Versão para impressão (A4, 2 colunas)</button>';
   content.appendChild(printRow);
 
-  document.title = page.title + " — Kite Docs";
+  document.title = page.title + " — Askemata";
   window.scrollTo(0,0);
   document.getElementById("sidebar").classList.remove("open");
 }
@@ -523,10 +525,20 @@ function route(){
   if(id) renderPage(id);
 }
 
+// Remove acentos e caixa para comparação de busca (assim "instalacao" acha "Instalação")
+function normalizeSearch(s){
+  return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+}
+
 document.getElementById("searchInput").addEventListener("input", (e)=>{
-  const q = e.target.value.trim().toLowerCase();
-  document.querySelectorAll(".nav-tree a").forEach(a=>{
-    a.classList.toggle("hidden", q.length>0 && !a.dataset.title.includes(q));
+  const q = normalizeSearch(e.target.value.trim());
+  document.querySelectorAll(".nav-tree li").forEach(li=>{
+    const match = q.length === 0 || normalizeSearch(li.textContent).includes(q);
+    li.classList.toggle("hidden", !match);
+  });
+  document.querySelectorAll(".nav-group").forEach(group=>{
+    const anyVisible = group.querySelector("li:not(.hidden)");
+    group.classList.toggle("hidden", !anyVisible);
   });
 });
 
