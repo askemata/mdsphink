@@ -164,6 +164,7 @@ body{
 .rtd-footer{
   text-align:center; color:var(--text-light); font-size:.8rem; padding:1.5rem 3rem 2.5rem;
 }
+.print-link-row{ text-align:center; margin-top:1.8rem; }
 
 .state-msg{ padding:2rem 3rem; color:var(--text-light); }
 .state-msg.error{ color:#c0392b; }
@@ -385,7 +386,6 @@ body{
   </div>
   <div class="breadcrumbs-row no-print">
     <div class="breadcrumbs" id="breadcrumbs"></div>
-    <button class="print-btn" id="printBtn" title="Abre o diálogo de impressão do navegador — escolha 'Salvar como PDF' para gerar um PDF">🖨️ Versão para impressão (A4, 2 colunas)</button>
   </div>
   <article class="document" id="content">
     <p class="state-msg">Carregando…</p>
@@ -508,6 +508,11 @@ async function renderPage(id){
     (next ? `<a class="next" href="#${next.id}">${next.title}</a>` : "<span></span>");
   content.appendChild(footer);
 
+  const printRow = document.createElement("div");
+  printRow.className = "print-link-row no-print";
+  printRow.innerHTML = '<button class="print-btn" title="Abre o diálogo de impressão do navegador — escolha \'Salvar como PDF\' para gerar um PDF">🖨️ Versão para impressão (A4, 2 colunas)</button>';
+  content.appendChild(printRow);
+
   document.title = page.title + " — Kite Docs";
   window.scrollTo(0,0);
   document.getElementById("sidebar").classList.remove("open");
@@ -529,8 +534,19 @@ document.getElementById("menuToggle").addEventListener("click", ()=>{
   document.getElementById("sidebar").classList.toggle("open");
 });
 
-document.getElementById("printBtn").addEventListener("click", ()=>{
-  window.print();
+// Fecha o menu mobile ao clicar em QUALQUER link da sidebar (título ou itens do
+// menu), mesmo que a página de destino seja a mesma atual (nesse caso o hash
+// não muda, então "hashchange" nunca dispara e renderPage() não roda).
+document.getElementById("sidebar").addEventListener("click", (e)=>{
+  if(e.target.tagName === "A"){
+    document.getElementById("sidebar").classList.remove("open");
+  }
+});
+
+// Delegação: o botão de impressão é recriado a cada renderPage(), então o
+// listener fica no #content (que nunca é substituído, só seu conteúdo).
+document.getElementById("content").addEventListener("click", (e)=>{
+  if(e.target.closest(".print-btn")) window.print();
 });
 
 (async function init(){
