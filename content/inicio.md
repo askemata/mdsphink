@@ -6,9 +6,9 @@ resumo: Visão geral da documentação do Kite, ferramenta de linha de comando d
 palavras-chave: [cli, automação, documentação, markdown]
 ---
 
-# Kite Docs
+# Askemata
 
-Bem-vindo à documentação do **Kite**, uma ferramenta de linha de comando de exemplo. Este conteúdo é um placeholder — substitua pelo texto real neste arquivo `.md`.
+Bem-vindo à documentação do **Askemata**, uma ferramenta de linha de comando de exemplo. Este conteúdo é um placeholder — substitua pelo texto real neste arquivo `.md`.
 
 > Esta wiki lê arquivos Markdown reais da pasta `content/`, listados em `content/index.json`, dentro de um layout que imita o tema Read the Docs do Sphinx.
 
