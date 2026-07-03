@@ -1,16 +1,14 @@
 ---
-autor: Askemata
-instituicao: Nome da Instituição
-email: alguem@exemplo.com
-resumo: Página inicial do arquivo Askemata.
-palavras-chave: [termo1, termo2, termo3]
+autor: Equipe Askemata
+instituicao: Askemata Labs
+email: contato@askemata.dev
+resumo: Visão geral da documentação do Kite, ferramenta de linha de comando de exemplo. Este resumo, assim como os demais campos acima, vem do front matter YAML deste arquivo .md e só aparece na versão impressa (A4, duas colunas).
+palavras-chave: [cli, automação, documentação, markdown]
 ---
 
-# Askemata
+# Kite Docs
 
-Bem-vindo à documentação do **Askemata**. Reúno aqui diversos "exercícios" em torno dos assuntos: Filosofia, Ciência, Ciências Humanas, Psicologia e Tecnologia. Dentre eles, o "*carnet de recherche*" [Askesis](https://askesis.hypotheses.org), o editor [Askesis-Zettel](http://askemata.github.io/az2) (Markdown com Zettelkasten), o organizador de tempo Tempus Fugit e outros implementos. 
-
-Nesta página, listo diversas implementações. Tudo é abastecido com arquivos `.md`. *Work in Progress*
+Bem-vindo à documentação do **Kite**, uma ferramenta de linha de comando de exemplo. Este conteúdo é um placeholder — substitua pelo texto real neste arquivo `.md`.
 
 > Esta wiki lê arquivos Markdown reais da pasta `content/`, listados em `content/index.json`, dentro de um layout que imita o tema Read the Docs do Sphinx.
 
