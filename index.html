@@ -175,6 +175,7 @@ body{
    ao imprimir / "Salvar como PDF"; a tela não é afetada.
    ============================================================ */
 .print-meta{ display:none; }
+.academic-header{ display:none; }
 
 @media print{
   @page{
@@ -226,9 +227,54 @@ body{
     font-size:19pt;
     line-height:1.25;
     border-bottom:none;
-    margin:0 0 18pt;
+    margin:0 0 6pt;
     padding:0;
     break-after:avoid;
+  }
+
+  /* Cabeçalho acadêmico: autor, afiliação, resumo e palavras-chave — vem do
+     front matter YAML do .md. Atravessa as 2 colunas, como o preâmbulo de um
+     artigo em LaTeX (\author, \affiliation, \begin{abstract}). */
+  .academic-header{
+    display:block;
+    column-span:all;
+    margin:0 0 16pt;
+  }
+  .academic-author{
+    text-align:center;
+    font-size:11pt;
+    font-family:"STIX Two Text", serif;
+    margin:0 0 2pt;
+  }
+  .academic-affiliation{
+    text-align:center;
+    font-style:italic;
+    font-size:9pt;
+    color:#444;
+    margin:0 0 12pt;
+  }
+  .academic-abstract{
+    max-width:120mm;
+    margin:0 auto 8pt;
+    font-size:8.7pt;
+    line-height:1.45;
+    text-align:justify;
+    hyphens:auto;
+    padding-top:8pt;
+    border-top:.5pt solid #999;
+  }
+  .academic-abstract-label{
+    font-variant:small-caps;
+    font-weight:700;
+    margin-right:.3em;
+  }
+  .academic-keywords{
+    max-width:120mm;
+    margin:0 auto;
+    font-size:8.7pt;
+    text-align:justify;
+    padding-bottom:8pt;
+    border-bottom:.5pt solid #999;
   }
 
   /* Seções numeradas: 1. Título */
@@ -271,7 +317,7 @@ body{
     orphans:3; widows:3;
   }
   .document h1 + p, .document h2 + p, .document h3 + p,
-  .print-meta + h1 + p{
+  .print-meta + h1 + p, .academic-header + p{
     text-indent:0;
   }
 
@@ -433,6 +479,44 @@ async function loadPageMarkdown(page){
   return md;
 }
 
+// Parser mínimo de front matter YAML — cobre o essencial (chave: valor, listas
+// em bloco "- item" e listas inline "[a, b, c]"). Não é um parser YAML completo
+// de propósito: os metadados de uma página de wiki não precisam de mais que isso,
+// e evita puxar uma biblioteca inteira só pra ler 5 campos.
+function parseFrontMatter(raw){
+  const match = raw.match(/^---\s*\n([\s\S]*?)\n---\s*\n?/);
+  if(!match) return { meta: {}, body: raw };
+  const yamlBlock = match[1];
+  const body = raw.slice(match[0].length);
+  const meta = {};
+  let currentKey = null;
+  yamlBlock.split("\n").forEach(line=>{
+    const listItem = line.match(/^\s*-\s+(.*)$/);
+    if(listItem && currentKey){
+      if(!Array.isArray(meta[currentKey])) meta[currentKey] = [];
+      meta[currentKey].push(listItem[1].trim().replace(/^["']|["']$/g, ""));
+      return;
+    }
+    const kv = line.match(/^([A-Za-zÀ-ÿ0-9_-]+):\s*(.*)$/);
+    if(kv){
+      const key = kv[1].trim();
+      let value = kv[2].trim();
+      currentKey = key;
+      if(value === ""){ meta[key] = []; return; } // lista em bloco vem nas próximas linhas
+      if(/^\[.*\]$/.test(value)){
+        meta[key] = value.slice(1, -1).split(",").map(s => s.trim().replace(/^["']|["']$/g, "")).filter(Boolean);
+      } else {
+        meta[key] = value.replace(/^["']|["']$/g, "");
+      }
+    }
+  });
+  return { meta, body };
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
 function buildSidebar(){
   const nav = document.getElementById("navTree");
   nav.innerHTML = "";
@@ -490,8 +574,9 @@ async function renderPage(id){
     content.innerHTML = '<p class="state-msg error">Erro ao carregar esta página: ' + err.message + '</p>';
     return;
   }
+  const fm = parseFrontMatter(md);
 
-  const html = marked.parse(renderAdmonitions(md));
+  const html = marked.parse(renderAdmonitions(fm.body));
   content.innerHTML = html;
 
   const meta = document.createElement("div");
@@ -500,6 +585,29 @@ async function renderPage(id){
   const today = new Date().toLocaleDateString("pt-BR", { day:"2-digit", month:"long", year:"numeric" });
   meta.innerHTML = "<span>" + kicker + "</span><span>" + today + "</span>";
   content.prepend(meta);
+
+  // Cabeçalho acadêmico (só aparece na versão impressa) — vem do front matter YAML
+  // do próprio arquivo .md: autor, instituicao, email, resumo, palavras-chave.
+  const fmData = fm.meta;
+  const hasAcademicData = fmData.autor || fmData.instituicao || fmData.email || fmData.resumo || fmData["palavras-chave"];
+  if(hasAcademicData){
+    const academic = document.createElement("div");
+    academic.className = "academic-header";
+    let inner = "";
+    if(fmData.autor) inner += `<p class="academic-author">${escapeHtml(fmData.autor)}</p>`;
+    const affiliation = [fmData.instituicao, fmData.email].filter(Boolean).map(escapeHtml).join(" · ");
+    if(affiliation) inner += `<p class="academic-affiliation">${affiliation}</p>`;
+    if(fmData.resumo) inner += `<div class="academic-abstract"><span class="academic-abstract-label">Resumo.</span> ${escapeHtml(fmData.resumo)}</div>`;
+    const kw = fmData["palavras-chave"];
+    if(kw){
+      const kwText = Array.isArray(kw) ? kw.join(", ") : kw;
+      inner += `<p class="academic-keywords"><em>Palavras-chave:</em> ${escapeHtml(kwText)}</p>`;
+    }
+    academic.innerHTML = inner;
+    const h1 = content.querySelector("h1");
+    if(h1) h1.insertAdjacentElement("afterend", academic);
+    else content.prepend(academic);
+  }
 
   const prev = PAGES[idx-1];
   const next = PAGES[idx+1];
@@ -530,17 +638,45 @@ function normalizeSearch(s){
   return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 }
 
-document.getElementById("searchInput").addEventListener("input", (e)=>{
-  const q = normalizeSearch(e.target.value.trim());
+// A busca por título é instantânea. Para buscar dentro do CONTEÚDO das páginas
+// também, precisamos ter todos os .md em mãos — isso só é buscado sob demanda,
+// na primeira vez que a pessoa usa a busca (não no carregamento inicial da wiki).
+let allContentLoaded = false;
+let allContentPromise = null;
+function ensureAllContentLoaded(){
+  if(allContentLoaded) return Promise.resolve();
+  if(!allContentPromise){
+    allContentPromise = Promise.all(
+      PAGES.map(p => loadPageMarkdown(p).catch(()=>"")) // uma página com erro não deve travar a busca nas demais
+    ).then(()=>{ allContentLoaded = true; });
+  }
+  return allContentPromise;
+}
+
+function applySearchFilter(rawQuery){
+  const q = normalizeSearch(rawQuery.trim());
   document.querySelectorAll(".nav-tree li").forEach(li=>{
-    const match = q.length === 0 || normalizeSearch(li.textContent).includes(q);
+    const a = li.querySelector("a");
+    const body = a ? (mdCache.get(a.dataset.id) || "") : "";
+    const haystack = normalizeSearch(li.textContent + " " + body);
+    const match = q.length === 0 || haystack.includes(q);
     li.classList.toggle("hidden", !match);
   });
   document.querySelectorAll(".nav-group").forEach(group=>{
     const anyVisible = group.querySelector("li:not(.hidden)");
     group.classList.toggle("hidden", !anyVisible);
   });
+}
+
+document.getElementById("searchInput").addEventListener("input", (e)=>{
+  const value = e.target.value;
+  applySearchFilter(value); // resultado imediato com o que já estiver em cache
+  ensureAllContentLoaded().then(()=>{
+    // só reaplica se o campo ainda tiver o mesmo texto (pessoa não continuou digitando)
+    if(document.getElementById("searchInput").value === value) applySearchFilter(value);
+  });
 });
+document.getElementById("searchInput").addEventListener("focus", ensureAllContentLoaded);
 
 document.getElementById("menuToggle").addEventListener("click", ()=>{
   document.getElementById("sidebar").classList.toggle("open");
@@ -578,4 +714,4 @@ document.getElementById("content").addEventListener("click", (e)=>{
 })();
 </script>
 </body>
-</html> 
+</html>
