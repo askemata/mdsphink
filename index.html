@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Askemata</title>
+<title>Kite Docs</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,400&family=Roboto+Slab:wght@400;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,400&family=Roboto+Slab:wght@400;700&family=Roboto+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
 <style>
 /* ============================================================
@@ -90,12 +90,19 @@ body{
 
 /* ---------- Layout / Content ---------- */
 .content-wrap{ margin-left:var(--sidebar-w); min-height:100vh; }
-.breadcrumbs{
+.breadcrumbs-row{
   background:#fcfcfc; border-bottom:1px solid var(--border);
-  padding:.7rem 3rem; font-size:.85rem; color:var(--text-light);
+  padding:.7rem 3rem; display:flex; align-items:center; justify-content:space-between; gap:1rem;
 }
+.breadcrumbs{ font-size:.85rem; color:var(--text-light); }
 .breadcrumbs a{ color:var(--accent-blue); text-decoration:none; }
 .breadcrumbs a:hover{ text-decoration:underline; }
+.print-btn{
+  flex:0 0 auto; background:#fff; border:1px solid var(--border); color:var(--text);
+  font-family:"Lato",sans-serif; font-size:.8rem; font-weight:700; letter-spacing:.01em;
+  padding:.4rem .8rem; border-radius:3px; cursor:pointer; white-space:nowrap;
+}
+.print-btn:hover{ background:var(--accent-blue); color:#fff; border-color:var(--accent-blue); }
 
 .document{ max-width:800px; padding:2.2rem 3rem 4rem; }
 .document h1{
@@ -161,6 +168,183 @@ body{
 .state-msg{ padding:2rem 3rem; color:var(--text-light); }
 .state-msg.error{ color:#c0392b; }
 
+/* ============================================================
+   MODO DE IMPRESSÃO — folha A4, duas colunas, tipografia acadêmica
+   inspirada em LaTeX (article class + booktabs). Só entra em ação
+   ao imprimir / "Salvar como PDF"; a tela não é afetada.
+   ============================================================ */
+.print-meta{ display:none; }
+
+@media print{
+  @page{
+    size: A4;
+    margin: 18mm 14mm 20mm;
+  }
+  html, body{ background:#fff; }
+  .no-print,
+  .sidebar, .mobile-bar, .rtd-footer, .print-btn,
+  .doc-footer{ display:none !important; }
+
+  .content-wrap{ margin-left:0; }
+  .document{
+    max-width:none;
+    padding:0;
+    margin:0;
+    font-family:"STIX Two Text", "Cambria", Georgia, serif;
+    font-size:10.3pt;
+    line-height:1.5;
+    color:#111;
+    column-count:2;
+    column-gap:9mm;
+    column-rule:.5pt solid #999;
+    text-align:justify;
+    hyphens:auto;
+    -webkit-hyphens:auto;
+    counter-reset: section;
+  }
+
+  /* Cabeçalho de página: assinatura + data, atravessando as 2 colunas */
+  .print-meta{
+    display:flex; justify-content:space-between; align-items:baseline;
+    column-span:all;
+    border-bottom:.8pt solid #111;
+    padding-bottom:5pt; margin-bottom:16pt;
+    font-family:"STIX Two Text", serif;
+    font-variant:small-caps;
+    letter-spacing:.04em;
+    font-size:9pt;
+    color:#333;
+  }
+
+  /* Título do documento: atravessa as colunas, centralizado, sem numeração */
+  .document h1{
+    column-span:all;
+    text-align:center;
+    font-family:"STIX Two Text", serif;
+    font-weight:700;
+    font-size:19pt;
+    line-height:1.25;
+    border-bottom:none;
+    margin:0 0 18pt;
+    padding:0;
+    break-after:avoid;
+  }
+
+  /* Seções numeradas: 1. Título */
+  .document h2{
+    counter-increment: section;
+    counter-reset: subsection;
+    font-family:"STIX Two Text", serif;
+    font-weight:700;
+    font-size:12pt;
+    border-bottom:none;
+    margin:14pt 0 6pt;
+    padding:0;
+    break-after:avoid;
+    break-inside:avoid;
+  }
+  .document h2::before{
+    content: counter(section) ".\0000a0\0000a0";
+  }
+
+  /* Subseções numeradas: 1.1 Título */
+  .document h3{
+    counter-increment: subsection;
+    font-family:"STIX Two Text", serif;
+    font-style:italic;
+    font-weight:600;
+    font-size:10.8pt;
+    margin:10pt 0 4pt;
+    break-after:avoid;
+    break-inside:avoid;
+  }
+  .document h3::before{
+    content: counter(section) "." counter(subsection) "\0000a0\0000a0";
+    font-style:normal;
+  }
+
+  /* Parágrafos: recuo de primeira linha ao estilo LaTeX, sem espaço entre eles */
+  .document p{
+    margin:0;
+    text-indent:1.2em;
+    orphans:3; widows:3;
+  }
+  .document h1 + p, .document h2 + p, .document h3 + p,
+  .print-meta + h1 + p{
+    text-indent:0;
+  }
+
+  .document a{ color:#111; text-decoration:none; border-bottom:.5pt solid #999; }
+
+  .document code{
+    font-family:"Courier Prime", "Courier New", monospace;
+    font-size:.82em;
+    background:none; border:none; padding:0; color:#111;
+  }
+  .document pre{
+    font-family:"Courier Prime", "Courier New", monospace;
+    font-size:8.3pt;
+    line-height:1.35;
+    background:#f7f7f7;
+    border:.5pt solid #999;
+    border-left:.5pt solid #999;
+    border-radius:0;
+    padding:7pt 8pt;
+    break-inside:avoid;
+    white-space:pre-wrap;
+    word-break:break-word;
+  }
+  .document pre code{ color:#111; }
+
+  .document blockquote{
+    font-style:italic;
+    border-left:1pt solid #111;
+    margin:8pt 0; padding:0 0 0 10pt;
+    color:#222;
+    break-inside:avoid;
+  }
+
+  /* Tabelas estilo booktabs: só linhas horizontais, sem grade */
+  .document table{
+    font-size:9pt;
+    margin:8pt 0 10pt;
+    break-inside:avoid;
+  }
+  .document th, .document td{
+    border:none;
+    border-bottom:.5pt solid #ccc;
+    padding:.3rem .5rem;
+  }
+  .document thead th{
+    background:none;
+    font-weight:700;
+    border-top:1pt solid #111;
+    border-bottom:.8pt solid #111;
+  }
+  .document tbody tr:last-child td{
+    border-bottom:1pt solid #111;
+  }
+
+  .document ul, .document ol{ margin:0 0 8pt; padding-left:1.3em; text-align:left; }
+  .document li{ margin-bottom:.15em; }
+  .document hr{ border-top:.5pt solid #999; margin:10pt 0; }
+  .document img{ max-width:100%; }
+
+  /* Admonitions: caixas discretas em tons de cinza, sem cor de tela */
+  .admonition{
+    border:.5pt solid #111 !important; border-radius:0;
+    background:none !important;
+    margin:8pt 0; break-inside:avoid;
+  }
+  .admonition-title{
+    background:none !important; color:#111 !important;
+    font-family:"STIX Two Text", serif;
+    font-variant:small-caps; font-weight:700; font-size:9pt;
+    padding:5pt 8pt 0;
+  }
+  .admonition p{ padding:4pt 8pt 6pt; text-indent:0; }
+}
+
 /* Mobile toggle */
 .mobile-bar{ display:none; }
 @media (max-width: 860px){
@@ -168,7 +352,7 @@ body{
   .sidebar.open{ transform:translateX(0); }
   .content-wrap{ margin-left:0; }
   .document{ padding:1.5rem 1.2rem 3rem; }
-  .breadcrumbs{ padding:.7rem 1.2rem; }
+  .breadcrumbs-row{ padding:.7rem 1.2rem; flex-wrap:wrap; }
   .mobile-bar{
     display:flex; align-items:center; gap:.8rem; background:var(--sidebar-bg); color:#fff;
     padding:.8rem 1.2rem; position:sticky; top:0; z-index:10;
@@ -183,7 +367,7 @@ body{
 
 <nav class="sidebar" id="sidebar">
   <div class="sidebar-header">
-    <a href="#inicio">🪁 Askemata</a>
+    <a href="#inicio">🪁 Kite Docs</a>
     <span class="version">v1.0.0</span>
   </div>
   <div class="search-box">
@@ -197,9 +381,12 @@ body{
 <div class="content-wrap">
   <div class="mobile-bar">
     <button id="menuToggle">☰</button>
-    <strong>Askemata</strong>
+    <strong>Kite Docs</strong>
   </div>
-  <div class="breadcrumbs" id="breadcrumbs"></div>
+  <div class="breadcrumbs-row no-print">
+    <div class="breadcrumbs" id="breadcrumbs"></div>
+    <button class="print-btn" id="printBtn" title="Abre o diálogo de impressão do navegador — escolha 'Salvar como PDF' para gerar um PDF">🖨️ Versão para impressão (A4, 2 colunas)</button>
+  </div>
   <article class="document" id="content">
     <p class="state-msg">Carregando…</p>
   </article>
@@ -305,6 +492,13 @@ async function renderPage(id){
   const html = marked.parse(renderAdmonitions(md));
   content.innerHTML = html;
 
+  const meta = document.createElement("div");
+  meta.className = "print-meta";
+  const kicker = page.section ? (page.section + " · Kite Docs") : "Kite Docs";
+  const today = new Date().toLocaleDateString("pt-BR", { day:"2-digit", month:"long", year:"numeric" });
+  meta.innerHTML = "<span>" + kicker + "</span><span>" + today + "</span>";
+  content.prepend(meta);
+
   const prev = PAGES[idx-1];
   const next = PAGES[idx+1];
   const footer = document.createElement("div");
@@ -333,6 +527,10 @@ document.getElementById("searchInput").addEventListener("input", (e)=>{
 
 document.getElementById("menuToggle").addEventListener("click", ()=>{
   document.getElementById("sidebar").classList.toggle("open");
+});
+
+document.getElementById("printBtn").addEventListener("click", ()=>{
+  window.print();
 });
 
 (async function init(){
