@@ -8,9 +8,7 @@ palavras-chave: [cli, automação, documentação, markdown]
 
 # Askemata
 
-Bem-vindo à documentação do **Askemata**, uma ferramenta de linha de comando de exemplo. Este conteúdo é um placeholder — substitua pelo texto real neste arquivo `.md`.
-
-> Esta wiki lê arquivos Markdown reais da pasta `content/`, listados em `content/index.json`, dentro de um layout que imita o tema Read the Docs do Sphinx.
+O presente espaço reúne "exercícios" diversos em torno de Filosofia, Ciências Humanas, Psicologia, Ética e Tecnologia. O empreendimento reúne o *carnet de recherche* [askesis](http://askeiss.hypotheses.org), um editor de [Markdown](http://askemata.github.io/askesismd) e outro de [Markdown com Zettelkasten](http://askemata.github.io/az2), meus links [Philpapers](https://philpeople.org/profiles/marcio-miotto) e [ORCID](https://orcid.org/0000-0003-0608-0542). 
 
 ## Por onde começar
 
